@@ -37,6 +37,68 @@
   const stopButton = document.querySelector('#stop');
 
   //Your code goes here
+	
+  // Get available voices
+  function populateVoices() {
+    voices = speechSynthesis.getVoices();
+
+    voicesDropdown.innerHTML = "";
+
+    voices.forEach(voice => {
+      const option = document.createElement("option");
+
+      option.value = voice.name;
+      option.textContent = voice.name + " (" + voice.lang + ")";
+
+      voicesDropdown.appendChild(option);
+    });
+  }
+
+  // Load voices
+  speechSynthesis.addEventListener("voiceschanged", populateVoices);
+
+  populateVoices();
+
+
+  // Select voice
+  function setVoice() {
+    msg.voice = voices.find(voice => voice.name === this.value);
+    toggle();
+  }
+
+  // Update rate and pitch
+  function setOption() {
+    msg[this.name] = this.value;
+    toggle();
+  }
+
+  // Speak the text
+  function toggle(startOver = true) {
+
+    speechSynthesis.cancel();
+
+    if (startOver) {
+      msg.text = document.querySelector('[name="text"]').value;
+      speechSynthesis.speak(msg);
+    }
+  }
+
+  // Speak button
+  speakButton.addEventListener("click", toggle);
+
+  // Stop button
+  stopButton.addEventListener("click", () => {
+    toggle(false);
+  });
+
+  // Voice dropdown
+  voicesDropdown.addEventListener("change", setVoice);
+
+  // Rate and pitch sliders, and text area
+  options.forEach(option => {
+    option.addEventListener("change", setOption);
+  });
+
 </script>
 
 </body>
